@@ -563,7 +563,7 @@ Custom property | Description | Default
         </div>
 
         <template is="dom-if" if="[[_isListRendered]]" restamp="true" strip-whitespace on-dom-change="_onListRendered">
-          <iron-list  id="listOfYears" items="[[_listOfYears]]" view="year" on-neon-animation-finish="_onAnimationFinish" selected-item="{{_selectedListItem}}" selection-enabled>
+          <iron-list id="listOfYears" items="[[_listOfYears]]" view="year" on-neon-animation-finish="_onAnimationFinish" selected-item="{{_selectedListItem}}" selection-enabled>
             <template>
               <div class$="each-list-of-years[[_isListOfYearsSelected(selected)]]" tabindex$="[[tabIndex]]" aria-label$="[[item.year]]" label$="[[item.year]]" on-tap="_goCalendar" on-keydown="_goCalendar">
                 [[item.year]]
@@ -1269,12 +1269,16 @@ Custom property | Description | Default
           // Automatically focus selected list of year at year view.
           this.async(function () {
             _target.toPage._focusPhysicalItem(_focusableItem);
+            console.log((new Date()) + ": iron-resize in onAnimationFinish");
+            this.$$('#listOfYears').fire("iron-resize");
           }, 1);
         }else {
           // When user navigate to calendar view from list view,
           // re-focus showSelectedYear.
           this.async(function () {
             this.$.showSelectedYear.focus();
+            console.log((new Date()) + ": iron-resize2 in onAnimationFinish");
+            this.$$('#listOfYears').fire("iron-resize");
           }, 1);
         }
       },
@@ -1318,6 +1322,8 @@ Custom property | Description | Default
         if (ev.target.if && this.noAnimation) {
           this.async(function () {
             this._updateListScroller(this.$$('#listOfYears'));
+            console.log(String(new Date()) + ": iron-resize to listOfYears");
+            this.$$('#listOfYears').fire("iron-resize");
           }, 1);
         }
       },
@@ -1344,29 +1350,29 @@ Custom property | Description | Default
         var sym = /\w+([^a-zA-Z0-9]+)\w+([^a-zA-Z0-9]+)\w+/i;
         var m = re.exec(_format);
         var n = sym.exec(_format);
-				var _temp = {};
-		    if (m !== null && n !== null) {
-					_temp.y = m[1];
-					_temp.m = m[2];
-					_temp.d = m[3];
-					_temp.s1 = n[1];
-					_temp.s2 = n[2];
-		    }
-				this.set('_format', _temp);
-				_temp = null;
+        var _temp = {};
+        if (m !== null && n !== null) {
+          _temp.y = m[1];
+          _temp.m = m[2];
+          _temp.d = m[3];
+          _temp.s1 = n[1];
+          _temp.s2 = n[2];
+        }
+        this.set('_format', _temp);
+        _temp = null;
       },
 
       // bind the selected date so that it's ready to be read from the outside world.
       _bindSelectedFulldate: function (_selectedYear, _selectedMonth, _selectedDate, _format) {
-				// show long date (eg. Fri, May 12 2017 instead.
+        // show long date (eg. Fri, May 12 2017 instead.
         if (this.showLongDate) {
           return this._computeShowLongDate(this.showLongDate,  this.locale, !0);
         }
 
-				var _formattedYear  = _selectedYear;
-				var _formattedMonth  = this._monthNames[_selectedMonth];
-				var _formattedDate  = _selectedDate;
-				var _finalFormatted = '';
+        var _formattedYear  = _selectedYear;
+        var _formattedMonth  = this._monthNames[_selectedMonth];
+        var _formattedDate  = _selectedDate;
+        var _finalFormatted = '';
         // compute new formatted year.
         if (_format.y === 'yy') {
           _formattedYear = _selectedYear%100;
@@ -1395,7 +1401,7 @@ Custom property | Description | Default
         _finalFormatted = _formattedYear + _format.s1 +
                           _formattedMonth + _format.s2 + _formattedDate;
 
-				return _finalFormatted;
+        return _finalFormatted;
       },
       // method for content tag (eg. buttons).
       _updateBindDate: function (ev) {

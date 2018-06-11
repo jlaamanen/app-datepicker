@@ -934,8 +934,8 @@ Custom property | Description | Default
         _selectedDate: {
           type: Number,
           value: function () {
-            return new Date().getDate();
-          },
+            return null
+          }
         },
 
         _chosenDaysOfMonth: {
@@ -1587,6 +1587,10 @@ Custom property | Description | Default
       // has to be standardized - YYYY/MM/DD.
       // http://dygraphs.com/date-formats.html
       _updateToReflectExternalChange: function (_inputDate) {
+        if (!_inputDate) {
+          // Ignore validation if input date is empty
+          return;
+        }
         // Due to limitation of input date received by platform's Date,
         // inputDate was designed to only be able to accept inputs for the followings:
         // short date for all locales in the format of yyyy/mm/dd or yyyy/d/m eg. 2016/06/06.
